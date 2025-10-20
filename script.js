@@ -169,7 +169,7 @@ function updateSchedule() {
                 countdownText = `Осталось: ${minutesLeft} мин`;
                 progressPercent = Math.min(100, (timePassed / totalDuration) * 100);
             } else {
-                countdownText = 'Завершен';
+                countdownText = '';
             }
         } else if (index === nextLessonIndex) {
             const [startTime] = lesson.time.split(' - ');
@@ -417,3 +417,4 @@ document.addEventListener('DOMContentLoaded', function() {
         updateDayEndCountdown();
     }, 10000); 
 });
+
