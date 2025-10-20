@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>САЙТЫ ГДЗ 2.???</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+
+    <div class="matrix-background">
+        <canvas id="matrixCanvas"></canvas>
+    </div>
+
+    <div class="blurry-background"></div>
+
+    <div class="app-container">
+        <div class="timer-display">
+            <div id="timer-time" class="time-text glitch-text-wrapper" data-text="00:00:00">00:00:00</div>
+            <div id="timer-date" class="date-text glitch-text-wrapper" data-text=""></div>
+        </div>
+
+        <div class="main-content-area" id="main-content-area">
+
+            <div id="gdz-section" class="content-section">
+                <h2 class="section-title glitch-text-wrapper" data-text="ССЫЛКИ НА ПОЛЕЗНЫЕ САЙТЫ">ССЫЛКИ НА ПОЛЕЗНЫЕ САЙТЫ</h2>
+                <div class="gdz-link-group">
+                    <a href="https://gdz.ru" target="_blank" class="gdz-link-button ios-glass">
+                        <i class="fas fa-book-open"></i> <span class="glitch-text-wrapper" data-text="Gdz.ru">Gdz.ru</span>
+                    </a>
+                    <a href="https://reshak.ru" target="_blank" class="gdz-link-button ios-glass">
+                        <i class="fas fa-graduation-cap"></i> <span class="glitch-text-wrapper" data-text="Reshak.ru">Reshak.ru</span>
+                    </a>
+                    <a href="https://www.euroki.org" target="_blank" class="gdz-link-button ios-glass">
+                        <i class="fas fa-pencil-ruler"></i> <span class="glitch-text-wrapper" data-text="Euroki.org">Euroki.org</span>
+                    </a>
+                    <a href="https://elschool.ru" target="_blank" class="gdz-link-button ios-glass">
+                        <i class="fas fa-atlas"></i> <span class="glitch-text-wrapper" data-text="Электронный журнал">Электронный журнал</span>
+                    </a>
+                    <a href="https://ru.wikipedia.org" target="_blank" class="gdz-link-button ios-glass">
+                        <i class="fas fa-lightbulb"></i> <span class="glitch-text-wrapper" data-text="Википедия">Wikipedia</span>
+                    </a>
+                </div>
+            </div>
+
+            <div id="schedule-container" class="content-section">
+                <h2 id="schedule-day-title" class="section-title glitch-text-wrapper" data-text="РАСПИСАНИЕ">РАСПИСАНИЕ</h2>
+                <div class="day-end-countdown" id="dayEndCountdown">
+                    </div>
+                <div id="schedule-list" class="schedule-list ios-glass">
+                    <div style="text-align: center; padding: 20px;">
+                        <span class="glitch-text-wrapper" data-text="Загрузка расписания...">Загрузка расписания...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chat-container" class="content-section chat-container" style="position: relative;">
+                <h2 class="section-title glitch-text-wrapper" data-text="ПОИСК ЯНДЕКС">ПОИСК ЯНДЕКС</h2>
+                <div class="search-info-box ios-glass" style="padding: 15px; margin-bottom: 5px; width: 100%; border-radius: 5px; font-size: 1.4rem; color: #00ff41; text-align: center;">
+                    <span class="glitch-text-wrapper" data-text="Простой приятный поисковик">поисковик</span>
+                </div>
+                <div id="crashed-overlay" class="crashed-section"></div>
+            </div>
+        </div>
+
+        <div class="search-compact-panel" id="search-compact-panel">
+             <div class="ai-input-group">
+                <input type="text" id="ai-input-compact" placeholder="Введите ваш поисковый запрос..." class="ios-glass" />
+                <button id="ai-send-btn-compact">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="footer ios-glass">
+            <p><span class="glitch-text-wrapper" data-text="by Ahmad">by Ahmad</span></p>
+            <p>
+                <span class="glitch-text-wrapper" data-text="1.6.7">
+                    2.
+                    <span class="glitch-crash-version">?.?</span>
+                </span>
+            </p>
+        </div>
+
+        <div class="bottom-nav">
+            <button id="gdz-btn" class="nav-btn">
+                <i class="fas fa-home"></i> <span class="nav-label glitch-text-wrapper" data-text="ГДЗ">ГДЗ</span>
+            </button>
+            <button id="schedule-btn" class="nav-btn">
+                <i class="fas fa-calendar-alt"></i> <span class="nav-label glitch-text-wrapper" data-text="Расписание">Расписание</span>
+            </button>
+            <button id="ai-btn" class="nav-btn">
+                <i class="fas fa-search"></i> <span class="nav-label glitch-text-wrapper" data-text="Поиск">Поиск</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script> 
+</body>
+</html>
