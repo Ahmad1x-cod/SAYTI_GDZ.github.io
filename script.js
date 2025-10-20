@@ -184,7 +184,7 @@ function updateSchedule() {
                 countdownText = 'Сейчас';
             }
         } else if (index < currentLessonIndex) {
-            countdownText = 'Завершен';
+            countdownText = '0';
         }
 
         const countdownWrapper = document.createElement('span');
@@ -417,4 +417,5 @@ document.addEventListener('DOMContentLoaded', function() {
         updateDayEndCountdown();
     }, 10000); 
 });
+
 
