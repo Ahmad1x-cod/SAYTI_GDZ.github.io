@@ -169,7 +169,7 @@ function updateSchedule() {
                 countdownText = `Осталось: ${minutesLeft} мин`;
                 progressPercent = Math.min(100, (timePassed / totalDuration) * 100);
             } else {
-                countdownText = '';
+                countdownText = 'Завершен';
             }
         } else if (index === nextLessonIndex) {
             const [startTime] = lesson.time.split(' - ');
@@ -184,7 +184,7 @@ function updateSchedule() {
                 countdownText = 'Сейчас';
             }
         } else if (index < currentLessonIndex) {
-            countdownText = '0';
+            countdownText = 'Завершен';
         }
 
         const countdownWrapper = document.createElement('span');
@@ -249,7 +249,7 @@ function updateDayEndCountdown() {
         minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
         dayEndCountText = `${hoursLeft}ч ${minutesLeft}м`;
     } else {
-         dayEndCountText = 'ЗАВЕРШЕН';
+         dayEndCountText = '';
     }
 
     countdownElement.innerHTML = `
@@ -417,5 +417,3 @@ document.addEventListener('DOMContentLoaded', function() {
         updateDayEndCountdown();
     }, 10000); 
 });
-
-
