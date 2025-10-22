@@ -270,7 +270,7 @@ function initSecretFunction() {
     const inputElement = document.getElementById('secret-input-compact');
     const sendButton = document.getElementById('secret-send-btn-compact');
     const secretContent = document.getElementById('secret-content');
-    const correctPin = "3415";
+    const correctPin = "5239";
 
     function checkSecretPin() {
         const userPin = inputElement.value.trim();
@@ -279,7 +279,7 @@ function initSecretFunction() {
             // Пин-код верный - показываем картинку
             secretContent.innerHTML = `
                 <div class="secret-image-container ios-glass" style="text-align: center; padding: 20px;">
-                    <img src="https://avatars.mds.yandex.net/i?id=d9a1f8c506ba401c5ae530be694203d1_l-10549345-images-thumbs&n=13" 
+                    <img src="https://i.pinimg.com/736x/23/49/81/234981e12809e39d811722a1da000766.jpg" 
                          alt="Секретная картинка" 
                          style="max-width: 100%; border: 2px solid #00ff41; border-radius: 5px;">
                     <div style="margin-top: 10px; font-size: 1.4rem;">
