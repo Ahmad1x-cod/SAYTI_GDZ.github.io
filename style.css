@@ -130,6 +130,8 @@ body {
     border: 2px solid #00ff41;
     margin-bottom: 8px;
     display: flex; align-items: center;
+    text-decoration: none;
+    color: #00ff41;
 }
 .gdz-link-button i {
     color: #48ff00; 
@@ -262,7 +264,7 @@ body {
         0 0 0 2px rgba(72, 255, 0, 0.1);
 }
 
-/* --- ПОИСКОВАЯ ПАНЕЛЬ (С НОВЫМ ЭФФЕКТОМ КУРСОРА) --- */
+/* --- СЕКРЕТНАЯ ПАНЕЛЬ (С НОВЫМ ЭФФЕКТОМ КУРСОРА) --- */
 @keyframes blink-cursor {
     0%, 100% { border-color: transparent; }
     50% { border-color: #00ff41; }
@@ -274,11 +276,13 @@ body {
     display: flex;
 }
 .ai-input-group { display: flex; gap: 10px; width: 100%; align-items: flex-end; }
-#ai-input-compact {
+#secret-input-compact {
     flex-grow: 1; height: 60px;
     padding: 10px 15px; font-size: 1.4rem;
     border-radius: 5px; border: none;
     background: rgba(0, 30, 0, 0.7) !important;
+    letter-spacing: 2px;
+    text-align: center;
     
     /* --- НОВЫЙ ЭФФЕКТ: СТИЛЬ КУРСОРА --- */
     caret-color: #00ff41; 
@@ -287,28 +291,56 @@ body {
     animation: blink-cursor 1s step-end infinite;
     /* --- КОНЕЦ: СТИЛЬ КУРСОРА --- */
 }
-#ai-input-compact:focus {
+#secret-input-compact:focus {
     box-shadow: 0 0 10px #00ff41, 0 1px 0 #00ff41;
     animation: none; /* Убираем мигание, когда фокус, чтобы не конфликтовал */
 }
 
-#ai-send-btn-compact {
+#secret-send-btn-compact {
     width: 60px; height: 60px; min-width: 60px;
     border-radius: 5px;
     background: #48ff00;
     color: #0a0a0a;
     box-shadow: 0 0 10px #48ff00;
     border: none;
+    cursor: pointer;
 }
-#ai-send-btn-compact:hover { background: #00ff41; box-shadow: 0 0 15px #00ff41; transform: scale(1.05); }
-#ai-send-btn-compact i {
+#secret-send-btn-compact:hover { background: #00ff41; box-shadow: 0 0 15px #00ff41; transform: scale(1.05); }
+#secret-send-btn-compact i {
     font-size: 1.8rem; margin: 0;
     color: #0a0a0a;
     text-shadow: none; 
 }
 
+/* --- Стили для секретной секции --- */
+.secret-content {
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
 
-/* --- ГЛИТЧ-АНИМАЦИИ (без изменений) --- */
+.secret-image-container {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+}
+
+.secret-error-container {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    animation: error-shake 0.5s ease-in-out;
+}
+
+@keyframes error-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* --- ГЛИТЧ-АНИМАЦИИ --- */
 .glitch-text-wrapper {
     position: relative;
     display: inline-block;
@@ -364,17 +396,24 @@ body {
     90% { clip: rect(25px, 9999px, 80px, 0); }
     100% { clip: rect(10px, 9999px, 40px, 0); }
 }
+
 @keyframes button-glitch {
-    0% { text-shadow: -1px 1px #00ff15; } 50% { text-shadow: 1px -1px #00e0ff; } 100% { text-shadow: -1px 1px #48ff00; }
+    0% { text-shadow: -1px 1px #00ff15; } 
+    50% { text-shadow: 1px -1px #00e0ff; } 
+    100% { text-shadow: -1px 1px #48ff00; }
 }
+
 @keyframes pulse-glitch {
     0% { opacity: 1; border-color: #aaff00; }
     50% { opacity: 0.8; border-color: #00ff41; transform: skewX(1deg); }
     100% { opacity: 1; border-color: #aaff00; }
 }
+
 @keyframes content-glitch {
-    0% { opacity: 0; transform: skewX(-5deg); filter: blur(3px); } 100% { opacity: 1; transform: skewX(0); filter: blur(0); }
+    0% { opacity: 0; transform: skewX(-5deg); filter: blur(3px); } 
+    100% { opacity: 1; transform: skewX(0); filter: blur(0); }
 }
+
 .glitch-crash-version {
     position: relative;
     display: inline-block;
@@ -432,10 +471,26 @@ body {
 }
 
 /* --- СТРУКТУРНЫЕ НАСТРОЙКИ --- */
-.main-content-area { flex: 1; overflow-y: auto; padding-right: 5px; }
-.content-section { display: none; flex-direction: column; height: 100%; gap: 10px; }
-.content-section.active { display: flex; animation: content-glitch 0.6s steps(2, start); }
-.gdz-link-group { display: flex; flex-direction: column; gap: 5px; }
+.main-content-area { 
+    flex: 1; 
+    overflow-y: auto; 
+    padding-right: 5px; 
+}
+.content-section { 
+    display: none; 
+    flex-direction: column; 
+    height: 100%; 
+    gap: 10px; 
+}
+.content-section.active { 
+    display: flex; 
+    animation: content-glitch 0.6s steps(2, start); 
+}
+.gdz-link-group { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 5px; 
+}
 
 /* --- ФУТЕР (by Ahmad в центре) --- */
 .footer {
@@ -453,6 +508,34 @@ body {
 .main-content-area::-webkit-scrollbar-track { background: rgba(0, 30, 0, 0.5); }
 .main-content-area::-webkit-scrollbar-thumb { background: #00ff41; border-radius: 4px; border: 1px solid #48ff00; }
 .main-content-area::-webkit-scrollbar-thumb:hover { background: #48ff00; }
+
+/* --- "КРАШНУТАЯ" ЧАСТЬ ЭКРАНА С СИМВОЛАМИ --- */
+.crashed-section {
+    background-color: #000;
+    color: #00ff41;
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
+    line-height: 1.2;
+    padding: 15px;
+    border: 2px dashed #48ff00;
+    box-shadow: 0 0 15px #48ff00;
+    overflow: hidden;
+    white-space: pre-wrap;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: text-glitch 0.1s steps(2, start) infinite;
+    display: none;
+    pointer-events: none;
+    z-index: 50;
+}
+@keyframes text-glitch {
+    0% { transform: translate(0.5px, -0.5px); opacity: 0.98; }
+    50% { transform: translate(-0.5px, 0.5px); opacity: 1; }
+    100% { transform: translate(0.5px, -0.5px); opacity: 0.98; }
+}
 
 /* Мобильные настройки */
 @media (max-width: 600px) {
@@ -494,32 +577,14 @@ body {
         z-index: 150;
         height: 80px;
     }
-}
-
-/* --- "КРАШНУТАЯ" ЧАСТЬ ЭКРАНА С СИМВОЛАМИ --- */
-.crashed-section {
-    background-color: #000;
-    color: #00ff41;
-    font-family: 'VT323', monospace;
-    font-size: 1.2rem;
-    line-height: 1.2;
-    padding: 15px;
-    border: 2px dashed #48ff00;
-    box-shadow: 0 0 15px #48ff00;
-    overflow: hidden;
-    white-space: pre-wrap;
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    animation: text-glitch 0.1s steps(2, start) infinite;
-    display: none;
-    pointer-events: none;
-    z-index: 50;
-}
-@keyframes text-glitch {
-    0% { transform: translate(0.5px, -0.5px); opacity: 0.98; }
-    50% { transform: translate(-0.5px, 0.5px); opacity: 1; }
-    100% { transform: translate(0.5px, -0.5px); opacity: 0.98; }
+    
+    .time-text {
+        font-size: 4.5rem;
+        margin-left: 20px;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+        margin-left: 10px;
+    }
 }
