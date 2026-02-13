@@ -3,102 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>САЙТЫ ГДЗ 2.???</title>
+    <title>ГДЗ Помощник 2.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css"> 
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-dark: #0a0a0f;
+            --glass-bg: rgba(240, 230, 255, 0.08);
+            --glass-border: rgba(200, 180, 255, 0.15);
+            --text-primary: #ffffff;
+            --text-secondary: #d0c4e9;
+            --accent-purple: #c8b4ff;
+            --accent-purple-bright: #e4d4ff;
+            --accent-purple-dim: rgba(200, 180, 255, 0.15);
+            --shadow-glow: rgba(200, 180, 255, 0.3);
+            --font-main: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+        }
+        body {
+            font-family: var(--font-main);
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+            color: var(--text-primary);
+            overflow: hidden;
+            min-height: 100vh;
+        }
+        .snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .ios-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 0.5px rgba(255,255,255,0.05), inset 0 0 0 1px rgba(255,255,255,0.05);
+            position: relative; overflow: hidden;
+        }
+        .ios-glass::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(200,180,255,0.08), transparent);
+            animation: shimmer 4s infinite;
+        }
+        @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
+        .app-wrapper {
+            position: relative; z-index: 1; max-width: 480px; width: 100%; height: 100vh; margin: 0 auto;
+            display: flex; flex-direction: column; animation: slideIn 0.8s cubic-bezier(0.16,1,0.3,1);
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(50px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .header { padding: 30px 20px 25px; border-radius: 0 0 35px 35px; animation: fadeInDown 1s cubic-bezier(0.16,1,0.3,1); margin: 0 8px 8px; }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        .clock {
+            font-size: 4rem; font-weight: 200; letter-spacing: 0.02em; text-align: center;
+            text-shadow: 0 0 40px var(--shadow-glow), 0 0 80px rgba(200,180,255,0.2);
+            margin-bottom: 10px; animation: clockPulse 3s ease-in-out infinite;
+        }
+        @keyframes clockPulse {
+            0%, 100% { transform: scale(1); text-shadow: 0 0 40px var(--shadow-glow), 0 0 80px rgba(200,180,255,0.2); }
+            50% { transform: scale(1.02); text-shadow: 0 0 50px var(--shadow-glow), 0 0 100px rgba(200,180,255,0.3); }
+        }
+        .date { font-size: 1.1rem; color: var(--text-secondary); text-align: center; opacity: 0.9; animation: fadeIn 1.2s ease-out 0.3s both; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .main-content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0 8px; }
+        .main-content::-webkit-scrollbar { width: 6px; }
+        .main-content::-webkit-scrollbar-track { background: transparent; }
+        .main-content::-webkit-scrollbar-thumb { background: var(--accent-purple); border-radius: 10px; box-shadow: 0 0 10px var(--shadow-glow); }
+        .content-section { display: none; padding: 15px; min-height: 100%; }
+        .content-section.active { display: block; animation: contentAppear 0.5s cubic-bezier(0.16,1,0.3,1); }
+        @keyframes contentAppear { from { opacity: 0; transform: scale(0.96) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .section-title {
+            font-size: 1.7rem; font-weight: 600; color: var(--accent-purple-bright); margin-bottom: 20px;
+            display: flex; align-items: center; gap: 12px; text-shadow: 0 0 25px var(--shadow-glow);
+            animation: titleSlide 0.6s cubic-bezier(0.16,1,0.3,1);
+        }
+        @keyframes titleSlide { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+        .section-title i { font-size: 1.6rem; animation: iconFloat 3s ease-in-out infinite; }
+        @keyframes iconFloat { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-5px) rotate(5deg); } }
+        .links-container { display: flex; flex-direction: column; gap: 12px; }
+        .link-card {
+            display: flex; align-items: center; gap: 18px; padding: 20px 22px; border-radius: 25px;
+            text-decoration: none; color: var(--text-primary); transition: all 0.5s cubic-bezier(0.16,1,0.3,1);
+            animation: cardAppear 0.7s cubic-bezier(0.16,1,0.3,1) backwards;
+        }
+        .link-card:nth-child(1) { animation-delay: 0.1s; }
+        .link-card:nth-child(2) { animation-delay: 0.15s; }
+        .link-card:nth-child(3) { animation-delay: 0.2s; }
+        .link-card:nth-child(4) { animation-delay: 0.25s; }
+        .link-card:nth-child(5) { animation-delay: 0.3s; }
+        @keyframes cardAppear { from { opacity: 0; transform: translateX(-30px) scale(0.9); } to { opacity: 1; transform: translateX(0) scale(1); } }
+        .link-card:hover {
+            background: var(--accent-purple-dim); border-color: var(--accent-purple); transform: translateX(12px) scale(1.03);
+            box-shadow: 0 12px 40px var(--shadow-glow), 0 0 60px rgba(200,180,255,0.2);
+        }
+        .link-card i {
+            font-size: 2rem; color: var(--accent-purple-bright); min-width: 32px; text-align: center;
+            transition: all 0.4s cubic-bezier(0.16,1,0.3,1); filter: drop-shadow(0 0 12px var(--shadow-glow));
+        }
+        .link-card:hover i { transform: scale(1.25) rotate(8deg); }
+        .link-card span { font-size: 1.15rem; font-weight: 500; }
+        .day-end-timer {
+            border-radius: 25px; padding: 22px 24px; margin-bottom: 15px; display: none;
+            animation: timerBounce 0.8s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes timerBounce { 0% { opacity: 0; transform: scale(0.3) translateY(-50px); } 60% { opacity: 1; transform: scale(1.1) translateY(0); } 80% { transform: scale(0.95); } 100% { transform: scale(1); } }
+        .day-end-timer.show { display: block; }
+        .timer-info { display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+        .timer-label { flex: 1; }
+        .timer-label h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 6px; }
+        .timer-label p { font-size: 0.95rem; color: var(--text-secondary); opacity: 0.8; }
+        .timer-count {
+            font-size: 2.2rem; font-weight: 600; color: var(--accent-purple-bright);
+            text-shadow: 0 0 20px var(--shadow-glow); animation: timerPulse 2s ease-in-out infinite;
+        }
+        @keyframes timerPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.08); opacity: 0.9; } }
+        .schedule-list { display: flex; flex-direction: column; gap: 12px; }
+        .loading { text-align: center; padding: 60px 20px; color: var(--text-secondary); font-size: 1.15rem; }
+        .lesson-card {
+            border-radius: 25px; padding: 20px 22px; transition: all 0.5s cubic-bezier(0.16,1,0.3,1);
+            animation: lessonAppear 0.6s cubic-bezier(0.16,1,0.3,1) backwards;
+        }
+        @keyframes lessonAppear { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .lesson-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 15px 50px rgba(0,0,0,0.5), 0 0 40px rgba(200,180,255,0.15); }
+        .lesson-card.current {
+            border-color: var(--accent-purple); background: var(--accent-purple-dim);
+            box-shadow: 0 0 40px var(--shadow-glow), 0 15px 50px rgba(0,0,0,0.4);
+            animation: currentLesson 2.5s ease-in-out infinite;
+        }
+        @keyframes currentLesson {
+            0%, 100% { box-shadow: 0 0 40px var(--shadow-glow), 0 15px 50px rgba(0,0,0,0.4); transform: scale(1); }
+            50% { box-shadow: 0 0 50px var(--shadow-glow), 0 18px 55px rgba(0,0,0,0.5); transform: scale(1.01); }
+        }
+        .lesson-card.finished { opacity: 0.45; filter: grayscale(100%) blur(0.3px); }
+        .lesson-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 15px; }
+        .lesson-info h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 6px; }
+        .lesson-info p { font-size: 1rem; color: var(--text-secondary); opacity: 0.85; }
+        .lesson-status {
+            font-size: 1.05rem; font-weight: 600; white-space: nowrap; padding: 8px 16px; border-radius: 18px;
+            background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); transition: all 0.4s ease;
+        }
+        .lesson-card.current .lesson-status {
+            color: var(--accent-purple-bright); background: rgba(200,180,255,0.3);
+            box-shadow: 0 0 20px var(--shadow-glow); animation: statusGlow 2s ease-in-out infinite;
+        }
+        @keyframes statusGlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+        .lesson-progress { margin-top: 16px; height: 6px; background: rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden; display: none; }
+        .lesson-card.current .lesson-progress { display: block; }
+        .progress-bar {
+            height: 100%; background: linear-gradient(90deg, var(--accent-purple), var(--accent-purple-bright));
+            border-radius: 10px; transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
+            box-shadow: 0 0 20px var(--shadow-glow); animation: progressFlow 3s linear infinite; background-size: 200% 100%;
+        }
+        @keyframes progressFlow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+        .calendar-container {
+            border-radius: 30px; padding: 28px; margin-bottom: 20px;
+            animation: calendarSlide 0.7s cubic-bezier(0.16,1,0.3,1);
+        }
+        @keyframes calendarSlide { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .calendar-header h3 { font-size: 1.4rem; font-weight: 600; color: var(--accent-purple-bright); text-shadow: 0 0 20px var(--shadow-glow); }
+        .calendar-nav { display: flex; gap: 12px; }
+        .calendar-nav button {
+            width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--glass-border);
+            background: var(--glass-bg); backdrop-filter: blur(20px); color: var(--accent-purple-bright);
+            cursor: pointer; transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+            display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .calendar-nav button:hover { background: var(--accent-purple-dim); transform: scale(1.15) rotate(5deg); box-shadow: 0 0 25px var(--shadow-glow); }
+        .calendar-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 12px; }
+        .calendar-weekday { text-align: center; font-size: 0.9rem; font-weight: 600; color: var(--accent-purple-bright); padding: 10px 0; opacity: 0.8; }
+        .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+        .calendar-day {
+            aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+            border-radius: 15px; font-size: 1rem; font-weight: 500; cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16,1,0.3,1); border: 1px solid transparent;
+        }
+        .calendar-day:hover { background: var(--accent-purple-dim); border-color: var(--accent-purple); transform: scale(1.15); box-shadow: 0 4px 20px var(--shadow-glow); }
+        .calendar-day.today {
+            background: var(--accent-purple-bright); color: #0f0f1e; font-weight: 700;
+            box-shadow: 0 0 30px var(--shadow-glow); animation: todayGlow 2.5s ease-in-out infinite;
+        }
+        @keyframes todayGlow { 0%, 100% { box-shadow: 0 0 30px var(--shadow-glow); transform: scale(1); } 50% { box-shadow: 0 0 40px var(--shadow-glow); transform: scale(1.05); } }
+        .calendar-day.other-month { color: var(--text-secondary); opacity: 0.25; }
+        .calendar-day.weekend { color: var(--accent-purple); }
+        .footer {
+            padding: 20px; border-radius: 35px 35px 0 0; text-align: center; font-size: 0.95rem;
+            color: var(--text-secondary); margin: 8px 8px 0; animation: footerSlide 1s cubic-bezier(0.16,1,0.3,1) 0.3s both;
+        }
+        @keyframes footerSlide { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .footer p { margin: 5px 0; }
+        .version { color: var(--accent-purple-bright); font-weight: 600; text-shadow: 0 0 15px var(--shadow-glow); }
+        .bottom-nav {
+            display: flex; justify-content: space-around; align-items: center; padding: 18px 12px;
+            border-radius: 30px 30px 0 0; margin: 0 8px; animation: navSlide 1.2s cubic-bezier(0.16,1,0.3,1) 0.5s both;
+        }
+        @keyframes navSlide { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        .nav-button {
+            display: flex; flex-direction: column; align-items: center; gap: 7px; background: none;
+            border: none; color: var(--text-secondary); cursor: pointer; padding: 12px 20px; border-radius: 20px;
+            transition: all 0.5s cubic-bezier(0.16,1,0.3,1); flex: 1; position: relative; overflow: hidden;
+        }
+        .nav-button::before {
+            content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-radius: 50%;
+            background: var(--accent-purple-dim); transform: translate(-50%, -50%);
+            transition: all 0.5s cubic-bezier(0.16,1,0.3,1);
+        }
+        .nav-button:hover::before { width: 120%; height: 200%; }
+        .nav-button:hover { color: var(--accent-purple-bright); transform: translateY(-5px) scale(1.05); }
+        .nav-button.active {
+            color: var(--accent-purple-bright); background: var(--accent-purple-dim);
+            box-shadow: 0 0 30px var(--shadow-glow); transform: scale(1.05);
+        }
+        .nav-button i {
+            font-size: 1.7rem; position: relative; z-index: 1;
+            transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+        }
+        .nav-button:hover i, .nav-button.active i { transform: scale(1.3) rotate(5deg); filter: drop-shadow(0 0 15px var(--shadow-glow)); }
+        .nav-button span { font-size: 0.8rem; font-weight: 600; position: relative; z-index: 1; }
+        @media (max-width: 480px) {
+            .app-wrapper { max-width: 100%; }
+            .clock { font-size: 3.5rem; }
+            .section-title { font-size: 1.5rem; }
+            .header, .footer, .bottom-nav { margin: 0; border-radius: 0; }
+            .main-content { padding: 0; }
+        }
+    </style>
 </head>
 <body>
-
-    <div class="matrix-background">
-        <canvas id="matrixCanvas"></canvas>
-    </div>
-
-    <div class="blurry-background"></div>
-
-    <div class="app-container">
-        <div class="timer-display">
-            <div id="timer-time" class="time-text glitch-text-wrapper" data-text="00:00:00">00:00:00</div>
-            <div id="timer-date" class="date-text glitch-text-wrapper" data-text=""></div>
-        </div>
-
-        <div class="main-content-area" id="main-content-area">
-
-            <div id="gdz-section" class="content-section">
-                <h2 class="section-title glitch-text-wrapper" data-text="ССЫЛКИ НА ПОЛЕЗНЫЕ САЙТЫ">ССЫЛКИ НА ПОЛЕЗНЫЕ САЙТЫ</h2>
-                <div class="gdz-link-group">
-                    <a href="https://gdz.ru" target="_blank" class="gdz-link-button ios-glass">
-                        <i class="fas fa-book-open"></i> <span class="glitch-text-wrapper" data-text="Gdz.ru">Gdz.ru</span>
-                    </a>
-                    <a href="https://reshak.ru" target="_blank" class="gdz-link-button ios-glass">
-                        <i class="fas fa-graduation-cap"></i> <span class="glitch-text-wrapper" data-text="Reshak.ru">Reshak.ru</span>
-                    </a>
-                    <a href="https://www.euroki.org" target="_blank" class="gdz-link-button ios-glass">
-                        <i class="fas fa-pencil-ruler"></i> <span class="glitch-text-wrapper" data-text="Euroki.org">Euroki.org</span>
-                    </a>
-                    <a href="https://elschool.ru" target="_blank" class="gdz-link-button ios-glass">
-                        <i class="fas fa-atlas"></i> <span class="glitch-text-wrapper" data-text="Электронный журнал">Электронный журнал</span>
-                    </a>
-                    <a href="https://ru.wikipedia.org" target="_blank" class="gdz-link-button ios-glass">
-                        <i class="fas fa-lightbulb"></i> <span class="glitch-text-wrapper" data-text="Википедия">Wikipedia</span>
-                    </a>
+    <canvas id="snowCanvas" class="snow-canvas"></canvas>
+    <div class="app-wrapper">
+        <header class="header ios-glass">
+            <div class="clock" id="clock">00:00:00</div>
+            <div class="date" id="date">Загрузка...</div>
+        </header>
+        <main class="main-content" id="mainContent">
+            <section id="gdzSection" class="content-section">
+                <h2 class="section-title"><i class="fas fa-book"></i> Полезные Ресурсы</h2>
+                <div class="links-container">
+                    <a href="https://gdz.ru" target="_blank" class="link-card ios-glass"><i class="fas fa-book-open"></i><span>GDZ.ru</span></a>
+                    <a href="https://reshak.ru" target="_blank" class="link-card ios-glass"><i class="fas fa-graduation-cap"></i><span>Reshak.ru</span></a>
+                    <a href="https://www.euroki.org" target="_blank" class="link-card ios-glass"><i class="fas fa-pencil-ruler"></i><span>Euroki.org</span></a>
+                    <a href="https://elschool.ru" target="_blank" class="link-card ios-glass"><i class="fas fa-atlas"></i><span>Электронный Журнал</span></a>
+                    <a href="https://ru.wikipedia.org" target="_blank" class="link-card ios-glass"><i class="fas fa-lightbulb"></i><span>Wikipedia</span></a>
                 </div>
-            </div>
-
-            <div id="schedule-container" class="content-section">
-                <h2 id="schedule-day-title" class="section-title glitch-text-wrapper" data-text="РАСПИСАНИЕ">РАСПИСАНИЕ</h2>
-                <div class="day-end-countdown" id="dayEndCountdown">
+            </section>
+            <section id="scheduleSection" class="content-section">
+                <h2 class="section-title"><i class="fas fa-calendar-alt"></i><span id="scheduleTitle">Расписание</span></h2>
+                <div id="dayEndTimer" class="day-end-timer ios-glass"></div>
+                <div id="scheduleList" class="schedule-list"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка...</div></div>
+            </section>
+            <section id="calendarSection" class="content-section">
+                <h2 class="section-title"><i class="fas fa-calendar"></i> Календарь</h2>
+                <div class="calendar-container ios-glass">
+                    <div class="calendar-header">
+                        <h3 id="calendarMonth">Январь 2024</h3>
+                        <div class="calendar-nav">
+                            <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                            <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                        </div>
                     </div>
-                <div id="schedule-list" class="schedule-list ios-glass">
-                    <div style="text-align: center; padding: 20px;">
-                        <span class="glitch-text-wrapper" data-text="Загрузка расписания...">Загрузка расписания...</span>
+                    <div class="calendar-weekdays">
+                        <div class="calendar-weekday">Пн</div><div class="calendar-weekday">Вт</div><div class="calendar-weekday">Ср</div>
+                        <div class="calendar-weekday">Чт</div><div class="calendar-weekday">Пт</div><div class="calendar-weekday">Сб</div><div class="calendar-weekday">Вс</div>
                     </div>
+                    <div id="calendarDays" class="calendar-days"></div>
                 </div>
-            </div>
-
-            <div id="secret-container" class="content-section secret-container" style="position: relative;">
-                <h2 class="section-title glitch-text-wrapper" data-text="СЕКРЕТ">СЕКРЕТ</h2>
-                <div class="search-info-box ios-glass" style="padding: 15px; margin-bottom: 5px; width: 100%; border-radius: 5px; font-size: 1.4rem; color: #d8b4ff; text-align: center;">
-                    <span class="glitch-text-wrapper" data-text="Введите пин-код">Введите пин-код</span>
-                </div>
-                <div id="secret-content" class="secret-content">
-                    <!-- Здесь будет отображаться секретная картинка -->
-                </div>
-                <div id="crashed-overlay" class="crashed-section"></div>
-            </div>
-        </div>
-
-        <div class="search-compact-panel" id="search-compact-panel">
-             <div class="ai-input-group">
-                <input type="password" id="secret-input-compact" placeholder="Введите пин-код..." class="ios-glass" />
-                <button id="secret-send-btn-compact">
-                    <i class="fas fa-key"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="footer ios-glass">
-            <p><span class="glitch-text-wrapper" data-text="by Ahmad">by Ahmad</span></p>
-            <p>
-                <span class="glitch-text-wrapper" data-text="1.6.7">
-                    2.
-                    <span class="glitch-crash-version">?.?</span>
-                </span>
-            </p>
-        </div>
-
-        <div class="bottom-nav">
-            <button id="gdz-btn" class="nav-btn">
-                <i class="fas fa-home"></i> <span class="nav-label glitch-text-wrapper" data-text="ГДЗ">ГДЗ</span>
-            </button>
-            <button id="schedule-btn" class="nav-btn">
-                <i class="fas fa-calendar-alt"></i> <span class="nav-label glitch-text-wrapper" data-text="Расписание">Расписание</span>
-            </button>
-            <button id="secret-btn" class="nav-btn">
-                <i class="fas fa-key"></i> <span class="nav-label glitch-text-wrapper" data-text="Секрет">Секрет</span>
-            </button>
-        </div>
+            </section>
+        </main>
+        <footer class="footer ios-glass"><p>by Ahmad</p><p class="version">v2.0</p></footer>
+        <nav class="bottom-nav ios-glass">
+            <button class="nav-button" data-section="gdzSection"><i class="fas fa-home"></i><span>ГДЗ</span></button>
+            <button class="nav-button active" data-section="scheduleSection"><i class="fas fa-calendar-alt"></i><span>Расписание</span></button>
+            <button class="nav-button" data-section="calendarSection"><i class="fas fa-calendar"></i><span>Календарь</span></button>
+        </nav>
     </div>
-
-    <script src="script.js"></script> 
+    <script>
+const SCHEDULE_DATA={Понедельник:[{time:"10:35 - 11:15",subject:"Разговоры о важном"},{time:"13:05 - 13:45",subject:"В химии все интересно"},{time:"14:00 - 14:40",subject:"Алгебра"},{time:"14:55 - 15:35",subject:"Иностранный язык (английский)"},{time:"15:50 - 16:30",subject:"Изобразительное искусство"},{time:"16:40 - 17:20",subject:"История"},{time:"17:25 - 18:05",subject:"Русский язык"},{time:"18:10 - 18:50",subject:"Информатика"}],Вторник:[{time:"13:05 - 13:45",subject:"Башкирский язык"},{time:"14:00 - 14:40",subject:"Физкультура"},{time:"14:55 - 15:35",subject:"Физкультура"},{time:"15:50 - 16:30",subject:"История"},{time:"16:40 - 17:20",subject:"Геометрия"},{time:"17:25 - 18:05",subject:"Bit-программирование"},{time:"18:10 - 18:50",subject:"Информатика"}],Среда:[{time:"12:20 - 13:00",subject:"Алгебра"},{time:"13:05 - 13:45",subject:"Английский язык"},{time:"14:00 - 14:40",subject:"География"},{time:"14:55 - 15:35",subject:"Русский язык"},{time:"15:50 - 16:30",subject:"Физика"},{time:"16:40 - 17:20",subject:"Алгебра"},{time:"17:25 - 18:05",subject:"Литература"},{time:"18:10 - 18:50",subject:"История"}],Четверг:[{time:"12:20 - 13:00",subject:"Занимательная математика"},{time:"13:05 - 13:45",subject:"Физика"},{time:"14:00 - 14:40",subject:"Родной язык"},{time:"14:55 - 15:35",subject:"Родная литература"},{time:"15:50 - 16:30",subject:"Геометрия"},{time:"16:40 - 17:20",subject:"Русский язык"},{time:"17:25 - 18:05",subject:"Технология"},{time:"18:10 - 18:50",subject:"Технология"}],Пятница:[{time:"14:00 - 14:40",subject:"Алгебра"},{time:"14:55 - 15:35",subject:"Английский язык"},{time:"15:50 - 16:30",subject:"Биология"},{time:"16:40 - 17:20",subject:"Русский язык"},{time:"17:25 - 18:05",subject:"Литература"},{time:"18:10 - 18:50",subject:"География"}],Суббота:[{time:"00:00 - 24:00",subject:"ВЫХОДНОЙ"}],Воскресенье:[{time:"00:00 - 24:00",subject:"ВЫХОДНОЙ"}]};const DAYS=["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"];const MONTHS=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];function getCurrentDay(){return DAYS[new Date().getDay()]}function parseTime(e){const[t,n]=e.split(":").map(Number);const s=new Date;s.setHours(t,n,0,0);return s}function formatTime(e){const t=Math.floor(e/(1e3*60));const n=Math.floor(t/60);const s=t%60;return n>0?`${n}ч ${s}м`:`${s} мин`}class SnowEffect{constructor(){this.canvas=document.getElementById("snowCanvas");this.ctx=this.canvas.getContext("2d");this.snowflakes=[];this.maxSnowflakes=250;this.resize();this.init();this.animate();window.addEventListener("resize",()=>this.resize())}resize(){this.canvas.width=window.innerWidth;this.canvas.height=window.innerHeight}init(){for(let e=0;e<this.maxSnowflakes;e++){this.snowflakes.push({x:Math.random()*this.canvas.width,y:Math.random()*this.canvas.height,radius:Math.random()*4+1,speed:Math.random()*1.8+.6,wind:Math.random()*1-.5,opacity:Math.random()*.8+.2,wobble:Math.random()*Math.PI*2,wobbleSpeed:Math.random()*.03+.01})}}update(){this.snowflakes.forEach(e=>{e.y+=e.speed;e.wobble+=e.wobbleSpeed;e.x+=Math.sin(e.wobble)*.6+e.wind;if(e.y>this.canvas.height){e.y=-10;e.x=Math.random()*this.canvas.width}if(e.x>this.canvas.width)e.x=0;else if(e.x<0)e.x=this.canvas.width})}draw(){this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);this.snowflakes.forEach(e=>{this.ctx.beginPath();this.ctx.arc(e.x,e.y,e.radius,0,Math.PI*2);this.ctx.fillStyle=`rgba(255, 255, 255, ${e.opacity})`;this.ctx.fill();const t=this.ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,e.radius*3);t.addColorStop(0,`rgba(200, 180, 255, ${e.opacity*.4})`);t.addColorStop(1,"transparent");this.ctx.beginPath();this.ctx.arc(e.x,e.y,e.radius*3,0,Math.PI*2);this.ctx.fillStyle=t;this.ctx.fill()})}animate(){this.update();this.draw();requestAnimationFrame(()=>this.animate())}}class ClockManager{constructor(){this.clockElement=document.getElementById("clock");this.dateElement=document.getElementById("date");this.update();setInterval(()=>this.update(),1e3)}update(){const e=new Date;const t=e.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit",second:"2-digit"});this.clockElement.textContent=t;const n=e.toLocaleDateString("ru-RU",{weekday:"long",year:"numeric",month:"long",day:"numeric"});this.dateElement.textContent=n.charAt(0).toUpperCase()+n.slice(1)}}class ScheduleManager{constructor(){this.titleElement=document.getElementById("scheduleTitle");this.listElement=document.getElementById("scheduleList");this.timerElement=document.getElementById("dayEndTimer");this.update();setInterval(()=>this.update(),1e4)}update(){const e=getCurrentDay();const t=SCHEDULE_DATA[e]||[];this.titleElement.textContent=`Расписание на ${e}`;if(t.length===1&&t[0].subject==="ВЫХОДНОЙ"){this.listElement.innerHTML='<div class="loading"><i class="fas fa-mug-hot"></i> Сегодня выходной!</div>';this.timerElement.classList.remove("show");return}const n=new Date;let s=-1,a=-1;t.forEach((e,t)=>{const[i,r]=e.time.split(" - ");const o=parseTime(i);const l=parseTime(r);if(n>=o&&n<=l)s=t;else if(n<o&&a===-1)a=t});this.updateDayEndTimer(t,n);this.listElement.innerHTML=t.map((e,t)=>this.createLessonCard(e,t,s,a,n)).join("")}createLessonCard(e,t,n,s,a){const[i,r]=e.time.split(" - ");const o=parseTime(i);const l=parseTime(r);let c="Ожидание",d="",u=0;if(t===n){const e=l-o;const t=a-o;const n=l-a;if(n>0){const e=Math.floor(n/(1e3*60));c=`${e} мин`;u=Math.min(100,t/e*100)}else{c="Завершён"}d="current"}else if(t===s){const e=o-a;if(e>0){const t=Math.floor(e/(1e3*60));c=`Через ${t} мин`}}else if(t<n){c="Завершён";d="finished"}const m=d==="current"&&u>0?`<div class="lesson-progress"><div class="progress-bar" style="width: ${u}%"></div></div>`:"";return`<div class="lesson-card ios-glass ${d}"><div class="lesson-header"><div class="lesson-info"><h3>${e.subject}</h3><p>${e.time}</p></div><div class="lesson-status">${c}</div></div>${m}</div>`}updateDayEndTimer(e,t){if(e.length===0||e[0].subject==="ВЫХОДНОЙ"){this.timerElement.classList.remove("show");return}const n=e[e.length-1];const[,s]=n.time.split(" - ");const a=parseTime(s);const i=a-t;if(i>0){this.timerElement.classList.add("show");this.timerElement.innerHTML=`<div class="timer-info"><div class="timer-label"><h3>До конца учебного дня</h3><p>Последний урок: ${n.subject}</p></div><div class="timer-count">${formatTime(i)}</div></div>`}else{this.timerElement.classList.remove("show")}}}class CalendarManager{constructor(){this.currentDate=new Date;this.monthElement=document.getElementById("calendarMonth");this.daysElement=document.getElementById("calendarDays");document.getElementById("prevMonth").addEventListener("click",()=>{this.currentDate.setMonth(this.currentDate.getMonth()-1);this.render()});document.getElementById("nextMonth").addEventListener("click",()=>{this.currentDate.setMonth(this.currentDate.getMonth()+1);this.render()});this.render()}render(){const e=this.currentDate.getFullYear();const t=this.currentDate.getMonth();this.monthElement.textContent=`${MONTHS[t]} ${e}`;const n=new Date(e,t,1);const s=new Date(e,t+1,0);const a=new Date(e,t,0);const i=(n.getDay()+6)%7;const r=s.getDate();const o=a.getDate();const l=new Date;let c="";for(let e=i;e>0;e--){c+=`<div class="calendar-day other-month">${o-e+1}</div>`}for(let n=1;n<=r;n++){const s=new Date(e,t,n);const a=s.toDateString()===l.toDateString();const i=s.getDay()===0||s.getDay()===6;let r="calendar-day";if(a)r+=" today";if(i)r+=" weekend";c+=`<div class="${r}">${n}</div>`}const d=Math.ceil((i+r)/7)*7;const u=d-(i+r);for(let e=1;e<=u;e++){c+=`<div class="calendar-day other-month">${e}</div>`}this.daysElement.innerHTML=c}}class NavigationManager{constructor(){this.buttons=document.querySelectorAll(".nav-button");this.sections=document.querySelectorAll(".content-section");this.buttons.forEach(e=>{e.addEventListener("click",()=>{const t=e.getAttribute("data-section");this.showSection(t)})});this.showSection("scheduleSection")}showSection(e){this.sections.forEach(e=>e.classList.remove("active"));const t=document.getElementById(e);if(t)t.classList.add("active");this.buttons.forEach(t=>{if(t.getAttribute("data-section")===e){t.classList.add("active")}else{t.classList.remove("active")}});document.getElementById("mainContent").scrollTop=0}}document.addEventListener("DOMContentLoaded",()=>{new SnowEffect;new ClockManager;new ScheduleManager;new CalendarManager;new NavigationManager});
+    </script>
 </body>
 </html>
